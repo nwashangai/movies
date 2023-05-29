@@ -50,7 +50,8 @@ config :movies, MoviesWeb.Endpoint,
       ~r"priv/gettext/.*(po)$",
       ~r"lib/movies_web/(controllers|live|components)/.*(ex|heex)$"
     ]
-  ]
+  ],
+  token: System.get_env("TMDB_TOKEN")
 
 # Enable dev routes for dashboard and mailbox
 config :movies, dev_routes: true
