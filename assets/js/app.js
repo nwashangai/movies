@@ -54,3 +54,9 @@ liveSocket.connect();
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket;
+
+window.performSearch = function (search) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('search', encodeURIComponent(search));
+  window.location.href = url.toString();
+};
