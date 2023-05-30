@@ -17,22 +17,30 @@ module.exports = {
       colors: {
         brand: '#FD4F00',
         primary: 'rgb(3,37,65)',
+        trans: '#202020b1',
       },
       maxWidth: {
         225: '14.0625rem',
+        575: '35.9375rem',
+        800: '50rem',
       },
       minHeight: {
         300: '300px',
       },
       maxHeight: {
         225: '14.0625rem',
+        520: '32.5rem',
       },
       spacing: {
         '5%': '5%',
         '3%': '3%',
         150: '9.375rem',
+        138: '8.625rem',
+        160: '10rem',
+        190: '11.875rem',
         300: '18.75rem',
         350: '21.875rem',
+        520: '32.5rem',
       },
       inset: {
         185: '11.5625rem',

@@ -17,8 +17,8 @@ defmodule MoviesWeb.Router do
   scope "/", MoviesWeb do
     pipe_through :browser
 
-    # get "/", PageController, :home
     live "/", MoviesLive.Index
+    live "/:movie_id", MoviesLive.Detail
   end
 
   # Other scopes may use custom stacks.

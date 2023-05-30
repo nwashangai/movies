@@ -2,7 +2,7 @@ defmodule MoviesWeb.MoviesLive.Index do
   import Jason
   use MoviesWeb, :live_view
 
-  def do_stuff(page) do
+  def getTopRatedVideos(page) do
     token = Application.get_env(:movies, MoviesWeb.Endpoint)[:token]
     url = "https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=#{page}"
 
@@ -21,14 +21,14 @@ defmodule MoviesWeb.MoviesLive.Index do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} = HTTPoison.request(request)
       body
     rescue
-      e -> IO.puts(e)
+      _e -> []
     end
   end
 
   def mount(_params, _session, socket) do
     results =
       Enum.map(1..5, fn page ->
-        top_rated = do_stuff(page)
+        top_rated = getTopRatedVideos(page)
         json_object = decode!(top_rated)
         Map.get(json_object, "results")
       end)

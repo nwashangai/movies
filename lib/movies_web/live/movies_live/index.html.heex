@@ -10,30 +10,32 @@
 <div class="px-3% py-9">
   <h1 class="text-2xl font-bold">Top 100 TMDB Movies</h1>
   <div
-    x-data="{base_url: 'https://image.tmdb.org/t/p/w440_and_h660_face/'}"
-    class="grid grid-cols-1 justify-items-center gap-y-12 xs:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-9 mt-5"
-  >
-    <a :for={movie <- @results} class="w-min cursor-pointer">
+    class="grid grid-cols-1 justify-items-center gap-y-12 xs:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-9 mt-5">
+    <a :for={movie <- @results} class="w-min cursor-pointer" href={"/#{movie["id"]}"}>
       <div class="relative flex flex-col w-150 h-350">
-        <img
-          loading="lazy"
-          class="w-full h-full max-h-225 rounded inline-block"
-          src={"https://image.tmdb.org/t/p/w440_and_h660_face/" <> movie["backdrop_path"]}
-          alt=""
+        <img loading="lazy" class="w-full h-full max-h-225 rounded inline-block"
+          src={"https://image.tmdb.org/t/p/w440_and_h660_face/" <> movie["poster_path"]}
+        alt=""
         />
         <!-- Circle -->
-        <div
-          class="absolute inline-flex items-center justify-center overflow-hidden rounded-full top-185 -left-2.5">
+        <div class="absolute inline-flex items-center justify-center overflow-hidden rounded-full top-185 -left-2.5">
           <svg class="w-20 h-20">
-            <circle class="text-gray-300" stroke-width="4" stroke="currentColor" fill="#1618179c" r="15" cx="50%" cy="50%" />
+            <circle class="text-gray-300" stroke-width="4" stroke="currentColor" fill="#1618179c" r="15" cx="50%"
+              cy="50%" />
             <circle class="text-green-500" stroke-width="4" stroke-dasharray={@circumference}
-              stroke-dashoffset={@circumference - trunc(Map.get(movie, "vote_average") * 10) / 100 * @circumference} stroke-linecap="round" stroke="currentColor"
-              fill="transparent" r="15" cx="50%" cy="50%" />
+              stroke-dashoffset={@circumference - trunc(Map.get(movie, "vote_average" ) * 10) / 100 * @circumference}
+              stroke-linecap="round" stroke="currentColor" fill="transparent" r="15" cx="50%" cy="50%" />
           </svg>
-          <span class="absolute text-white text-base"><%= trunc(movie["vote_average"] * 10) %></span>
+          <span class="absolute text-white text-base">
+            <%= trunc(movie["vote_average"] * 10) %>
+          </span>
         </div>
-        <h1 class="text-l font-bold mt-5 line-clamp-2"><%= movie["title"] %></h1>
-        <p class="font-light text-gray-500"><%= movie["release_date"] %></p>
+        <h1 class="text-l font-bold mt-5 line-clamp-2">
+          <%= movie["title"] %>
+        </h1>
+        <p class="font-light text-gray-500">
+          <%= movie["release_date"] %>
+        </p>
       </div>
     </a>
   </div>
