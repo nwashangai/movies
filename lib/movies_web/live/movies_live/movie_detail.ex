@@ -1,5 +1,4 @@
 defmodule MoviesWeb.MoviesLive.Detail do
-  import Jason
   import Http
   use MoviesWeb, :live_view
 
@@ -16,17 +15,20 @@ defmodule MoviesWeb.MoviesLive.Detail do
   end
 
   def mount(%{"movie_id" => movie_id}, _session, socket) do
-    movie = decode!(get_movie_details(movie_id))
-    credits = decode!(get_movie_credits(movie_id))
-    reviews = decode!(get_movie_reviews(movie_id))
+    movie = get_movie_details(movie_id)
+    credits = get_movie_credits(movie_id) |> Map.get("cast")
+    reviews = get_movie_reviews(movie_id) |> Map.get("results")
 
     socket =
       assign(socket, %{
         movie: movie,
-        actors: Map.get(credits, "cast"),
-        reviews: Map.get(reviews, "results")
+        actors: credits,
+        reviews: reviews,
+        error: nil
       })
 
     {:ok, socket}
+  rescue
+    _ -> {:ok, assign(socket, %{error: "Network error occurred. Please try again."})}
   end
 end

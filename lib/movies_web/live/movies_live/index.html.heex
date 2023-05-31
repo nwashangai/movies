@@ -1,62 +1,83 @@
-<.flash_group flash={@flash} />
-<div class="bg-[url('/images/hero-bg.jpeg')] bg-cover bg-repeat min-h-300 px-3% py-5%">
-  <div class="flex flex-col text-white">
-    <h1 class="text-5xl font-bold">TMDB Movies</h1>
-    <p class="text-2xl font-bold">
-      Millions of movies, TV shows and people to discover. Explore now.
-    </p>
-    <div class="relative mt-5 w-full">
-      <div x-data="{ search: '' }" class=" w-full bg-gray-200 rounded-full overflow-hidden">
-        <input x-model="search" type="text" x-on:keydown.enter="$refs.searchButton.click()"
-          class="w-full text-black px-4 py-2 bg-transparent border-0 focus:outline-none"
-          placeholder="Search movies..." />
-        <button type="button" x-ref="searchButton" x-bind:disabled="search === ''" x-bind:class="{
+<%=if @error do%>
+  <div class="flex items-center justify-center" style="height: calc(100vh - 3rem);">
+    <div class="bg-red-500 text-white px-4 py-2 rounded">
+      <span class="font-bold">Network Error:</span>
+      <span class="ml-2">
+        <%=@error %>
+      </span>
+    </div>
+  </div>
+  <% else %>
+    <div class="bg-[url('/images/hero-bg.jpeg')] bg-cover bg-repeat min-h-300 px-3% py-5%">
+      <div class="flex flex-col text-white">
+        <h1 class="text-5xl font-bold">TMDB Movies</h1>
+        <p class="text-2xl font-bold">
+          Millions of movies, TV shows and people to discover. Explore now.
+        </p>
+        <div class="relative mt-5 w-full">
+          <div x-data="{ search: '' }" class=" w-full bg-gray-200 rounded-full overflow-hidden">
+            <input x-model="search" type="text" x-on:keydown.enter="$refs.searchButton.click()"
+              class="w-full text-black px-4 py-2 bg-transparent border-0 focus:outline-none"
+              placeholder="Search movies..." />
+            <button type="button" x-ref="searchButton" x-bind:disabled="search === ''" x-bind:class="{
                 'cursor-not-allowed': search === '',
                 'cursor-pointer': search !== ''
               }" x-on:click="performSearch(search)"
-          class="absolute top-0 right-0 px-4 py-2 bg-blue-500 text-white font-semibold rounded-r-full">
-          Search
-        </button>
+              class="absolute top-0 right-0 px-4 py-2 bg-blue-500 text-white font-semibold rounded-r-full">
+              Search
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-<div class="px-3% py-9">
-  <h1 class="text-2xl font-bold">
-    <%= if @search, do: "Search Results For \" #{@search}\"", else: "Top 100 TMDB Movies" %>
-  </h1>
-  <div
-    class="grid grid-cols-1 justify-items-center gap-y-12 xs:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-9 mt-5">
-    <%= for movie <- @results do %>
-      <a class="w-min cursor-pointer" href={"/#{movie["id"]}"}>
-        <div class="relative flex flex-col w-150 h-350">
-          <% path=movie["poster_path"]; poster=if path, do: "https://image.tmdb.org/t/p/w440_and_h660_face/#{path}" ,
-            else: "https://placehold.co/150x225?text=Movie" %>
-            <img loading="lazy" class="w-full h-full max-h-225 rounded inline-block" src={poster} alt="" />
-            <!-- Circle -->
-            <div
-              class="absolute inline-flex items-center justify-center overflow-hidden rounded-full top-185 -left-2.5">
-              <% circumference=88.49555921538757 %>
-                <svg class="w-20 h-20">
-                  <circle class="text-gray-300" stroke-width="4" stroke="currentColor" fill="#1618179c" r="15" cx="50%"
-                    cy="50%" />
-                  <circle class="text-green-500" stroke-width="4" stroke-dasharray={circumference}
-                    stroke-dashoffset={circumference - trunc(Map.get(movie, "vote_average" ) * 10) / 100 *
-                    circumference} stroke-linecap="round" stroke="currentColor" fill="transparent" r="15" cx="50%"
-                    cy="50%" />
-                </svg>
-                <span class="absolute text-white text-base">
-                  <%= trunc(movie["vote_average"] * 10) %>
-                </span>
+    <div class="px-3% py-9 mb-24 md:mb-12">
+      <h1 class="text-2xl font-bold">
+        <%= if @search, do: "Search Results For \" #{@search}\"", else: "Top 100 TMDB Movies" %>
+      </h1>
+      <div
+        class="grid grid-cols-1 justify-items-center gap-y-12 xs:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-9 mt-5">
+        <%= for movie <- @results do %>
+          <a class="w-min cursor-pointer" href={"/#{movie["id"]}"}>
+            <div class="relative flex flex-col w-150 h-350">
+              <% path=movie["poster_path"]; poster=if path do %>
+                https://image.tmdb.org/t/p/w440_and_h660_face/<%=path%>
+                  <% else %>
+                    https://placehold.co/150x225?text=Movie
+                    <% end %>
+                      <img loading="lazy" class="w-full h-full max-h-225 rounded inline-block" src={poster} alt="" />
+                      <!-- Circle -->
+                      <div
+                        class="absolute inline-flex items-center justify-center overflow-hidden rounded-full top-185 -left-2.5">
+                        <% circumference=88.49555921538757 %>
+                          <svg class="w-20 h-20">
+                            <circle class="text-gray-300" stroke-width="4" stroke="currentColor" fill="#1618179c" r="15"
+                              cx="50%" cy="50%" />
+                            <circle class="text-green-500" stroke-width="4" stroke-dasharray={circumference}
+                              stroke-dashoffset={circumference - trunc(Map.get(movie, "vote_average" ) * 10) / 100 *
+                              circumference} stroke-linecap="round" stroke="currentColor" fill="transparent" r="15"
+                              cx="50%" cy="50%" />
+                          </svg>
+                          <span class="absolute text-white text-base">
+                            <%= trunc(movie["vote_average"] * 10) %>
+                          </span>
+                      </div>
+                      <h1 class="text-l font-bold mt-5 line-clamp-2">
+                        <%= movie["title"] %>
+                      </h1>
+                      <p class="font-light text-gray-500">
+                        <%= movie["release_date"] %>
+                      </p>
             </div>
-            <h1 class="text-l font-bold mt-5 line-clamp-2">
-              <%= movie["title"] %>
-            </h1>
-            <p class="font-light text-gray-500">
-              <%= movie["release_date"] %>
-            </p>
-        </div>
-      </a>
-      <% end %>
-  </div>
-</div>
+          </a>
+          <% end %>
+      </div>
+      <div class="flex justify-center mt-6">
+        <%= if @page < @total_pages do %>
+          <button class="py-2 px-4 text-white bg-primary rounded hover:bg-opacity-75 transition-colors"
+            phx-click="load_more">
+            Load More
+          </button>
+          <% end %>
+      </div>
+    </div>
+    <% end %>
