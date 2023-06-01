@@ -29,6 +29,8 @@ defmodule MoviesWeb.MoviesLive.Detail do
 
     {:ok, socket}
   rescue
-    _ -> {:ok, assign(socket, %{error: "Network error occurred. Please try again."})}
+    error ->
+      IO.inspect(error)
+      {:ok, assign(socket, %{error: "Network error occurred. Please try again."})}
   end
 end

@@ -47,7 +47,9 @@ defmodule MoviesWeb.MoviesLive.Index do
 
     {:ok, socket}
   rescue
-    _ -> {:ok, assign(socket, %{error: "Network error occurred. Please try again."})}
+    error ->
+      IO.inspect(error)
+      {:ok, assign(socket, %{error: "Network error occurred. Please try again."})}
   end
 
   def handle_event("load_more", _payload, socket) do
