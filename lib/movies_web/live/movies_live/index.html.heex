@@ -31,70 +31,72 @@
       </div>
     </div>
     <div class="px-3% py-9 mb-24 md:mb-12">
-      <div class="flex flex-col md:flex-row justify-between w-full">
-        <h1 class="text-2xl font-bold">
-          <%= if @search, do: "Search Results For \" #{@search}\"", else: "Top 100 TMDB Movies" %>
-        </h1>
-        <% movie_style=if @type=="movies" do 'bg-primary text-white' else '' end; tv_style=if @type=="tv"
-          do 'bg-primary text-white' else '' end; %>
-          <div x-data="{ activeTab: @type }" class="flex justify-center">
-            <button x-on:click="changeListRoute('movies')" class={"px-4 py-2 rounded-l-lg bg-gray-200 text-gray-800
-              focus:outline-none #{movie_style}"}>
-              Movies
-            </button>
-            <button x-on:click="changeListRoute('tv')" class={"px-4 py-2 rounded-r-lg bg-gray-200 text-gray-800
-              focus:outline-none #{tv_style}"}>
-              TV Shows
-            </button>
-          </div>
-      </div>
+      <% category=if @type=="tv" do "TV Shows" else "Movies" end %>
+        <div class="flex flex-col md:flex-row justify-between w-full">
+          <h1 class="text-2xl font-bold">
+            <%= if @search, do: "Search Results For \" #{@search}\"", else: "Top 100 TMDB #{category}" %>
+          </h1>
+          <% movie_style=if @type=="movies" do 'bg-primary text-white' else '' end; tv_style=if @type=="tv"
+            do 'bg-primary text-white' else '' end; %>
+            <div x-data="{ activeTab: @type }" class="flex justify-center">
+              <button x-on:click="changeListRoute('movies')" class={"px-4 py-2 rounded-l-lg bg-gray-200 text-gray-800
+                focus:outline-none #{movie_style}"} disabled={@type=="movies" }>
+                Movies
+              </button>
+              <button x-on:click="changeListRoute('tv')" class={"px-4 py-2 rounded-r-lg bg-gray-200 text-gray-800
+                focus:outline-none #{tv_style}"} disabled={@type=="tv" }>
+                TV Shows
+              </button>
+            </div>
+        </div>
 
-      <div
-        class="grid grid-cols-1 justify-items-center gap-y-12 xs:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-9 mt-5">
-        <%= for movie <- @results do %>
-          <% link=if @type=="tv" do Enum.join(["/tv/", movie["id"]], "" ) else Enum.join(["/movie/", movie["id"]], "" )
-            end%>
-            <a class="w-min cursor-pointer" href={link}>
-              <div class="relative flex flex-col w-150 h-350">
-                <% path=movie["poster_path"]; poster=if path do %>
-                  https://image.tmdb.org/t/p/w440_and_h660_face/<%=path%>
-                    <% else %>
-                      https://placehold.co/150x225?text=Movie
-                      <% end %>
-                        <img loading="lazy" class="w-full h-full max-h-225 rounded inline-block" src={poster} alt="" />
-                        <!-- Circle -->
-                        <div
-                          class="absolute inline-flex items-center justify-center overflow-hidden rounded-full top-185 -left-2.5">
-                          <% circumference=88.49555921538757 %>
-                            <svg class="w-20 h-20">
-                              <circle class="text-gray-300" stroke-width="4" stroke="currentColor" fill="#1618179c"
-                                r="15" cx="50%" cy="50%" />
-                              <circle class="text-green-500" stroke-width="4" stroke-dasharray={circumference}
-                                stroke-dashoffset={circumference - trunc(Map.get(movie, "vote_average" ) * 10) / 100 *
-                                circumference} stroke-linecap="round" stroke="currentColor" fill="transparent" r="15"
-                                cx="50%" cy="50%" />
-                            </svg>
-                            <span class="absolute text-white text-base">
-                              <%= trunc(movie["vote_average"] * 10) %>
-                            </span>
-                        </div>
-                        <h1 class="text-l font-bold mt-5 line-clamp-2">
-                          <%= movie["title"] %>
-                        </h1>
-                        <p class="font-light text-gray-500">
-                          <%= movie["release_date"] %>
-                        </p>
-              </div>
-            </a>
+        <div
+          class="grid grid-cols-1 justify-items-center gap-y-12 xs:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-9 mt-5">
+          <%= for movie <- @results do %>
+            <% link=if @type=="tv" do Enum.join(["/tv/", movie["id"]], "" ) else Enum.join(["/movie/", movie["id"]], ""
+              ) end%>
+              <a class="w-min cursor-pointer" href={link}>
+                <div class="relative flex flex-col w-150 h-350">
+                  <% path=movie["poster_path"]; poster=if path do %>
+                    https://image.tmdb.org/t/p/w440_and_h660_face/<%=path%>
+                      <% else %>
+                        https://placehold.co/150x225?text=Movie
+                        <% end %>
+                          <img loading="lazy" class="w-full h-full max-h-225 rounded inline-block" src={poster}
+                            alt="" />
+                          <!-- Circle -->
+                          <div
+                            class="absolute inline-flex items-center justify-center overflow-hidden rounded-full top-185 -left-2.5">
+                            <% circumference=88.49555921538757 %>
+                              <svg class="w-20 h-20">
+                                <circle class="text-gray-300" stroke-width="4" stroke="currentColor" fill="#1618179c"
+                                  r="15" cx="50%" cy="50%" />
+                                <circle class="text-green-500" stroke-width="4" stroke-dasharray={circumference}
+                                  stroke-dashoffset={circumference - trunc(Map.get(movie, "vote_average" ) * 10) / 100 *
+                                  circumference} stroke-linecap="round" stroke="currentColor" fill="transparent" r="15"
+                                  cx="50%" cy="50%" />
+                              </svg>
+                              <span class="absolute text-white text-base">
+                                <%= trunc(movie["vote_average"] * 10) %>
+                              </span>
+                          </div>
+                          <h1 class="text-l font-bold mt-5 line-clamp-2">
+                            <%=if @type=="tv" do movie["name"] else movie["title"] end %>
+                          </h1>
+                          <p class="font-light text-gray-500">
+                            <%=if @type=="tv" do movie["first_air_date"] else movie["release_date"] end %>
+                          </p>
+                </div>
+              </a>
+              <% end %>
+        </div>
+        <div class="flex justify-center mt-6">
+          <%= if @page < @total_pages do %>
+            <button class="py-2 px-4 text-white bg-primary rounded hover:bg-opacity-75 transition-colors"
+              phx-click="load_more">
+              Load More
+            </button>
             <% end %>
-      </div>
-      <div class="flex justify-center mt-6">
-        <%= if @page < @total_pages do %>
-          <button class="py-2 px-4 text-white bg-primary rounded hover:bg-opacity-75 transition-colors"
-            phx-click="load_more">
-            Load More
-          </button>
-          <% end %>
-      </div>
+        </div>
     </div>
     <% end %>

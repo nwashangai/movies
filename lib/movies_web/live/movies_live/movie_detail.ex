@@ -16,6 +16,11 @@ defmodule MoviesWeb.MoviesLive.Detail do
 
   def mount(%{"movie_id" => movie_id, "type" => type}, _session, socket) do
     movie = get_movie_details(type, movie_id)
+
+    if is_nil(movie) do
+      raise MoviesWeb.InvalidMovie, message: "Custom error occurred"
+    end
+
     credits = get_movie_credits(type, movie_id) |> Map.get("cast")
     reviews = get_movie_reviews(type, movie_id) |> Map.get("results")
 
@@ -30,6 +35,9 @@ defmodule MoviesWeb.MoviesLive.Detail do
 
     {:ok, socket}
   rescue
+    MoviesWeb.InvalidMovie ->
+      {:ok, assign(socket, %{error: "Invalid movie Id please check and try again."})}
+
     error ->
       IO.inspect(error)
       {:ok, assign(socket, %{error: "Network error occurred. Please try again."})}
