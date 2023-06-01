@@ -63,3 +63,10 @@ window.performSearch = function (search) {
 window.changeListRoute = function (type) {
   window.location.href = `/${type}`;
 };
+
+window.share = function (url) {
+  window.open(
+    `${url}${window.location.origin + window.location.pathname}`,
+    '_blank'
+  );
+};
