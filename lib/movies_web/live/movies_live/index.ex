@@ -10,25 +10,26 @@ defmodule MoviesWeb.MoviesLive.Index do
     end
   end
 
-  def get_top_rated_videos(page \\ 1) do
-    request("https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=#{page}")
+  def get_top_rated_videos(type, page \\ 1) do
+    request("https://api.themoviedb.org/3/#{type}/top_rated?language=en-US&page=#{page}")
   end
 
-  def get_searched_videos(search, page \\ 1) do
-    IO.inspect("https://api.themoviedb.org/3/search/movie?query=#{search}&page=#{page}")
-    request("https://api.themoviedb.org/3/search/movie?query=#{search}&page=#{page}")
+  def get_searched_videos(search, type, page \\ 1) do
+    request("https://api.themoviedb.org/3/search/#{type}?query=#{search}&page=#{page}")
   end
 
   def mount(params, _session, socket) do
+    type = Map.get(params, "type") || "movies"
+
     search = Map.get(params, "search")
 
     results =
       case search do
         nil ->
-          get_top_rated_videos()
+          get_top_rated_videos(String.slice(type, 0, 5))
 
         _ ->
-          get_searched_videos(search)
+          get_searched_videos(search, String.slice(type, 0, 5))
       end
 
     socket =
@@ -42,6 +43,7 @@ defmodule MoviesWeb.MoviesLive.Index do
             5
           end,
         search: search |> decode_uri(),
+        type: type,
         error: nil
       })
 
@@ -53,13 +55,18 @@ defmodule MoviesWeb.MoviesLive.Index do
   end
 
   def handle_event("load_more", _payload, socket) do
-    %{results: current_results, search: current_search, page: current_page} = socket.assigns
+    %{results: current_results, search: current_search, page: current_page, type: type} =
+      socket.assigns
+
     next_page = current_page + 1
 
     results =
       case current_search do
-        nil -> get_top_rated_videos(next_page)
-        _ -> get_searched_videos(current_search |> URI.encode(), next_page)
+        nil ->
+          get_top_rated_videos(String.slice(type, 0, 5), next_page)
+
+        _ ->
+          get_searched_videos(current_search |> URI.encode(), String.slice(type, 0, 5), next_page)
       end
       |> Map.get("results")
 

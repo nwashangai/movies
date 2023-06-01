@@ -18,7 +18,8 @@ defmodule MoviesWeb.Router do
     pipe_through :browser
 
     live "/", MoviesLive.Index
-    live "/:movie_id", MoviesLive.Detail
+    live "/:type", MoviesLive.Index
+    live "/:type/:movie_id", MoviesLive.Detail
   end
 
   # Other scopes may use custom stacks.

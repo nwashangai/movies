@@ -59,3 +59,7 @@ window.performSearch = function (search) {
   url.searchParams.set('search', encodeURIComponent(search));
   window.location.href = url.toString();
 };
+
+window.changeListRoute = function (type) {
+  window.location.href = `/${type}`;
+};

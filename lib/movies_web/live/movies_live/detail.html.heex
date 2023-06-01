@@ -8,8 +8,8 @@
     </div>
   </div>
   <% else %>
-    <% backdrop_path=@movie["backdrop_path"]; poster_url=@movie["poster_path"];
-      date=String.split(@movie["release_date"], ~r/-/ ); %>
+    <% backdrop_path=@movie["backdrop_path"]; poster_url=@movie["poster_path"]; date=if @type=="tv" do
+      String.split(@movie["first_air_date"], ~r/-/ ) else String.split(@movie["release_date"], ~r/-/ ) end %>
       <section style={"--image-url: url('https://www.themoviedb.org/t/p/w1920_and_h800_multi_faces/#{backdrop_path}')"}
         class="bg-[image:var(--image-url)] bg-cover bg-repeat md:h-520">
         <div class="flex flex-col md:flex-row w-full h-full p-8 bg-trans">
@@ -18,7 +18,7 @@
           <div class="flex grow flex-col px-8">
             <div class="flex flex-wrap">
               <h1 class="text-white text-3xl font-bold">
-                <%=@movie["title"] %>
+                <%=if @type=="tv" do @movie["name"] else @movie["title"] end %>
               </h1>
               <span class="text-gray-400 text-3xl ml-3">(<%=List.first(date) %>
                   )</span>
